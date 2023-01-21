@@ -9,7 +9,7 @@ export TEXTDOMAIN
 
 # attempts to get an answer if something failed
 attempts=0
-attempts_max=5
+attempts_max=8
 # randomness value, default is 0.7, smaller amount is more correct answers and bigger value is more creative (but can lead to errors, value 2 is almost gargbage, like the AI being in drugs), this value can be reconfigured later
 temperature="0.8"
 model="text-davinci-003"
