@@ -257,8 +257,10 @@ main(){
         echo -e "Dependency required: Install the package 'elive-tools' first" 1>&2
         exit 1
     fi
-    if ! el_dependencies_check "jq|wdiff|curl|zenity|batcat|yad" ; then
-        el_dependencies_install "jq|wdiff|curl|zenity|batcat|yad"
+    if ! [[ -e "/etc/elive-version" ]] ; then
+        if ! el_dependencies_check "jq|wdiff|curl|batcat|yad|cowsay" ; then
+            el_dependencies_install "jq|wdiff|curl|batcat|yad|cowsay"
+        fi
     fi
 
     if ! el_verify_internet 2>/dev/null ; then
@@ -568,9 +570,6 @@ main(){
                 if ((is_console)) ; then
                     result_show_dialog_copy "$answer_g"
                 else
-                    if ! el_dependencies_check "cowsay" ; then
-                        el_dependencies_install "cowsay"
-                    fi
                     result_show_dialog_copy "$answer_g" | cowsay -f linda
                 fi
             else
