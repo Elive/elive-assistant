@@ -244,8 +244,19 @@ chatgpt_apikey_get(){
     result="$( $guitool --entry --title="$message_title" --text="$( eval_gettext "Insert here your API key" )" )"
 
     if [[ -n "$result" ]] ; then
-        verifier="$( OPENAI_TOKEN="$result" chatgpt_ask "$request_verification" )"
-        if [[ "$verifier" = "enlightenment" ]] ; then
+        OPENAI_TOKEN="$result" chatgpt_ask "$request_verification"
+        verifier="$answer_g"
+        if [[ "$verifier" != "enlightenment" ]] ; then
+            el_error "AI didn't answered 'enlightenment': $verifier" 2>/dev/null
+            OPENAI_TOKEN="$result" chatgpt_ask "write me a beautiful sentence with at least 10 words"
+        fi
+        #if [[ "$verifier" = "enlightenment" ]] ; then
+        if [[ -n "$verifier" ]] ; then
+            if ((is_interactive)) && ! ((is_gui_wanted)) ; then
+                el_info "API Key added successfully"
+            else
+                el_notify soft "robot" "Elive AI" "API Key added successfully"
+            fi
             conf_chatgpt_apikey="$result"
             export OPENAI_TOKEN="$conf_chatgpt_apikey"
             el_config_save "conf_chatgpt_apikey"
