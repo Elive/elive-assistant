@@ -301,6 +301,7 @@ main(){
     if [[ -z "$1" ]] && ! ((is_stdin)) ; then
         if ((is_interactive)) ; then
             echo -e "Usage: $(basename $BASH_SOURCE) mode message"
+            echo -e "  GUI: use with --gui if you run it from a terminal but want some GUI features"
             echo -e "  you an also use this tool as a pipe, like: echo 'hell0 wrold' | $(basename $0) corrector"
             echo -e "Modes:"
             echo -e "\nText modifiers:"
