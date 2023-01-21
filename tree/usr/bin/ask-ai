@@ -77,22 +77,36 @@ result_show_compare(){
 result_show_dialog_copy(){
     local answer
     answer="$1"
+    local message_copy
+    message_copy="$( printf "$( eval_gettext "Copy" )" "" )"
+    local message_copied
+    message_copied="$( printf "$( eval_gettext "Copied" )" "" )"
+    local message_done
+    message_done="$( printf "$( eval_gettext "Done" )" "" )"
+    local message_speak
+    message_speak="$( printf "$( eval_gettext "Speak" )" "" )"
+    local message_conversate
+    message_conversate="$( printf "$( eval_gettext "Conversate" )" "" )"
+
 
     #if false ; then
     if ((is_interactive)) && ! ((is_gui_wanted)) ; then
         printf "%s\n" "$answer"
     else
-        #if printf "%s\n" "$answer" | $guitool --width=620 --height="450" --text-info --title="$message_title" --ok-label="$( eval_gettext "Copy" )" --cancel-label="$( eval_gettext "Done" )" ; then
+        #if printf "%s\n" "$answer" | $guitool --width=620 --height="450" --text-info --title="$message_title" --ok-label="$message_copy" --cancel-label="$message_done" ; then
         printf "%s\n" "$answer" | yad --on-top --image=robot \
             --width=600 --height=400 --center \
             --text-info --no-markup --wrap \
             --title="$message_title - $mode mode" \
-            --button=gtk-close --button="$( eval_gettext "Speak" )!stock_volume:12" --button="$( eval_gettext "Conversate" )!chat":10 --button=gtk-copy:11  --escape-ok
+            --button=gtk-close --button="${message_speak}!stock_volume:12" --button="${message_conversate}!chat":10 --button=gtk-copy:11  --escape-ok
         returned=$?
         case "$returned" in
             10)
                 echo -e "$message_complete_g" | xclip -i -selection clipboard
-                el_notify soft "gtk-dialog-info" "$( eval_gettext "Copied" )" "$( eval_gettext "You can paste the full request into the website in order to run the same request." )"
+                local message_paste_full
+                message_paste_full="$( printf "$( eval_gettext "You can paste the full request into the website in order to run the same request." )" "" )"
+
+                el_notify soft "gtk-dialog-info" "$message_copied" "$message_paste_full"
                 web-launcher "https://chat.openai.com/chat"
                 # wait some time before to exit from this tool because otherwise the copy-paste is lost
                 is_wait_needed=1
@@ -404,7 +418,7 @@ main(){
         "synonyms"|"synonym")
             chatgpt_ask "${request_synonyms}\n\n${message}"
             answer_g="$( echo "$answer_g" | sort -u | sed -e '/^$/d' )"
-            result_show_notification "$( eval_gettext "Synonyms / Definitions" )" "$answer_g"
+            result_show_notification "$( eval_gettext "Synonyms or Definitions" )" "$answer_g"
             ;;
         "rephrase")
             chatgpt_ask "${request_rephrase}\n\n${message}"
