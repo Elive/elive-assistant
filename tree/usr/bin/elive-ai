@@ -40,14 +40,14 @@ source /usr/share/elive-ai/requests/requests
 
 message_title="$( printf "$( eval_gettext "Supra-Intelligent AI for Elive" )" "" )"
 
-guitool="yad --on-top --image=robot --center --title='$message_title'"
+guitool="yad --on-top --image=robot --center "
 
 el_error_wrapper(){
     if ((is_interactive)) && ! ((is_gui_wanted)) ; then
         el_error "$@"
     else
         el_error "$@"
-        $guitool --error --text="$@"
+        $guitool --error --title="$message_title" --text="$@"
     fi
 }
 
@@ -66,7 +66,7 @@ result_show_compare(){
         wdiff -w "$(tput bold;tput setaf 1)-" -x "$(tput sgr0)" -y "$(tput bold;tput setaf 2)+" -z "$(tput sgr0)" <( printf "%s\n" "$message" ) <( printf "%s\n" "$answer" )
         echo -e "" 1>&2
     else
-        if $guitool --question --text="$( eval_gettext "Do you want to visually view the differences?" )" ; then
+        if $guitool --question --title="$message_title" --text="$( eval_gettext "Do you want to visually view the differences?" )" ; then
             urxvt -hold -title "$( eval_gettext "Close the terminal when you have finished" )"  -e bash -c "wdiff -w \"\$(tput bold;tput setaf 1)-\" -x \"\$(tput sgr0)\" -y \"\$(tput bold;tput setaf 2)+\" -z \"\$(tput sgr0)\" <( printf \"%s\" \"$message\" ) <( printf \"%s\" \"$answer\" )"
             meld <( printf "%s\n" "$message" | sed -e 's|\.|.\n|g' -e 's|,|,\n|g' ) <( printf "%s\n" "$answer" | sed -e 's|\.|.\n|g' -e 's|,|,\n|g' )
             sleep 4
@@ -237,11 +237,11 @@ chatgpt_apikey_get(){
     request_verification="please write this exact word and only this word in a single line, no caps: enlightenment"
 
     # get key from web and insert it
-    $guitool --info --text="$( eval_gettext "In order to use this tool, you need to add an API key. We will open a web page where you can generate a new API key, then copy it and insert it in the next question." )"
+    $guitool --info --title="$message_title" --text="$( eval_gettext "In order to use this tool, you need to add an API key. We will open a web page where you can generate a new API key, then copy it and insert it in the next question." )"
     ( web-launcher https://beta.openai.com/account/api-keys & )
     sleep 10
 
-    result="$( $guitool --entry --text="$( eval_gettext "Insert here your API key" )" )"
+    result="$( $guitool --entry --title="$message_title" --text="$( eval_gettext "Insert here your API key" )" )"
 
     if [[ -n "$result" ]] ; then
         verifier="$( OPENAI_TOKEN="$result" chatgpt_ask "$request_verification" )"
@@ -257,7 +257,7 @@ chatgpt_apikey_get(){
             exit 1
         fi
     else
-        $guitool --error --text="$( eval_gettext "You need to insert an API key to use. Exiting..." )"
+        $guitool --error --title="$message_title" --text="$( eval_gettext "You need to insert an API key to use. Exiting..." )"
         exit 1
     fi
 }
@@ -364,7 +364,7 @@ main(){
             #echo -e "  "
             echo -e "\nNotes: You can write in any language, and it will reply in the same one. The calls are a single shot, if you want to have a deeper conversation please use https://chat.openai.com/chat instead"
         else
-            $guitool --error --text="$( eval_gettext "No requests given, use this tool as:\n" ) $SOURCE mode message"
+            $guitool --error --title="$message_title" --text="$( eval_gettext "No requests given, use this tool as:\n" ) $SOURCE mode message"
         fi
         exit 1
     fi
