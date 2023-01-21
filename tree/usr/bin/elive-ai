@@ -237,7 +237,7 @@ chatgpt_apikey_get(){
     request_verification="please write this exact word and only this word in a single line, no caps: enlightenment"
 
     # get key from web and insert it
-    $guitool --info --title="$message_title" --text="$( eval_gettext "In order to use this tool, you need to add an API key. We will open a web page where you can generate a new API key, then copy it and insert it in the next question." )"
+    $guitool --info --buton= --button=gtk-ok:0  --title="$message_title" --text="$( eval_gettext "In order to use this tool, you need to add an API key. We will open a web page where you can generate a new API key, then copy it and insert it in the next question." )"
     ( web-launcher https://beta.openai.com/account/api-keys & )
     sleep 10
 
