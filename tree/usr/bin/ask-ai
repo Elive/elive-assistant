@@ -272,8 +272,11 @@ main(){
         exit 1
     fi
     if ! [[ -e "/etc/elive-version" ]] ; then
-        if ! el_dependencies_check "jq|wdiff|curl|batcat|yad|cowsay" ; then
-            el_dependencies_install "jq|wdiff|curl|batcat|yad|cowsay"
+        if ! el_dependencies_check "jq|wdiff|curl|yad|cowsay" ; then
+            el_dependencies_install "jq|wdiff|curl|yad|cowsay"
+        fi
+        if ! el_dependencies_check "batcat" ; then
+            el_dependencies_install "bat"
         fi
     fi
 
