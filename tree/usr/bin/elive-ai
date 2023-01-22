@@ -11,7 +11,7 @@ export TEXTDOMAIN
 attempts=0
 attempts_max=8
 # randomness value, default is 0.7, smaller amount is more correct answers and bigger value is more creative (but can lead to errors, value 2 is almost gargbage, like the AI being in drugs), this value can be reconfigured later
-temperature="0.8"
+temperature="0.7${RANDOM:0:1}"
 model="text-davinci-003"
 
 # debug
@@ -74,7 +74,7 @@ result_show_compare(){
     if ((is_interactive)) && ! ((is_gui_wanted)) ; then
         echo -e "" 1>&2
         wdiff -w "$(tput bold;tput setaf 1)-" -x "$(tput sgr0)" -y "$(tput bold;tput setaf 2)+" -z "$(tput sgr0)" <( printf "%s\n" "$message" ) <( printf "%s\n" "$answer" )
-        echo -e "${el_c_gr2}------------------------------------------------------------------${el_c_n}\n" 1>&2
+        echo -e "${el_c_gr}-------------------------------------------------------------------------------${el_c_n}\n" 1>&2
     else
         if $guitool --question --title="$message_title" --text="$( eval_gettext "Do you want to visually view the differences?" )" ; then
             urxvt -hold -title "$( eval_gettext "Close the terminal when you have finished" )"  -e bash -c "wdiff -w \"\$(tput bold;tput setaf 1)-\" -x \"\$(tput sgr0)\" -y \"\$(tput bold;tput setaf 2)+\" -z \"\$(tput sgr0)\" <( printf \"%s\" \"$message\" ) <( printf \"%s\" \"$answer\" )"
@@ -165,7 +165,7 @@ chatgpt_ask(){
     fi
 
     # request to OpenAI API
-    response="$( curl -m 60  https://api.openai.com/v1/completions \
+    response="$( curl -m 120  https://api.openai.com/v1/completions \
         -sS \
         -H 'Content-Type: application/json' \
         -H "Authorization: Bearer $OPENAI_TOKEN" \
@@ -327,63 +327,58 @@ main(){
             echo -e "Usage: $(basename $BASH_SOURCE) mode message"
             echo -e "  GUI: use with --gui if you run it from a terminal but want some GUI features"
             echo -e "  You can also use this tool as a pipe, e.g. echo 'hell0 wrold' | $(basename $0) corrector"
-            echo -e "Modes:"
+
             echo -e "\nText modifiers:"
             echo -e "  translate:    Translates from any language (even if mixed) to your local language used in your Elive system"
-            echo -e "  translate-en: Translate any text to english, with well formed sentences and good and elegant english"
-            echo -e "  corrector:    It corrects any given text (in any language)"
-            echo -e "  proofread:    It corrects and improves slightly any given text"
-            echo -e "  synonyms:     Write synonyms for a given word, or define a concept. Ex: computer portable -> laptop"
-            echo -e "  rephrase:     Rewrites a text improving it"
-            echo -e "  persuade:     Rewrite a text in a more persuasive way"
-            echo -e "  improver:     It rephrases texts in a more deeply, elegant and literary way, showing different options"
-            echo -e "  summarize:    Summarize a text, remove useless and unneeded parts"
-            echo -e "  simplify:     Simplify a text as much as possible, making it shorter and concise (lacking emotion)"
+            echo -e "  translate-en: Translates any text to English, with well-formed sentences and good, elegant English"
+            echo -e "  corrector:    Corrects any given text (in any language)"
+            echo -e "  proofread:    Corrects and slightly improves any given text"
+            echo -e "  synonyms:     Writes synonyms for a given word, or defines a concept. e.g. 'computer portable' -> laptop"
+            echo -e "  rephrase:     Rewrites a text in a different way"
+            echo -e "  persuade:     Rewrites a text in a more persuasive way"
+            echo -e "  improver:     Rephrases a text in a deeper, more elegant and literary way, showing different options"
+            echo -e "  summarize:    Summarizes a text, removing useless and unneeded parts"
+            echo -e "  simplify:     Simplifies a text as much as possible, making it shorter and concise (lacking emotion)"
             echo -e "  organize:     Rewrites your text in a list of points in a logical order"
 
             echo -e "\nTools:"
-            echo -e "  explain:      Explains a concept, a jargon, abbreviature, or anything!"
-            echo -e "  ocrfix:       Fixes the text of a wrongly detected characters from a scanned document"
+            echo -e "  explain:      Explains a concept, jargon, abbreviation, or anything!"
+            echo -e "  ocrfix:       Fixes text like the ones wrongly detected from a scanned document"
             #echo -e "  code:         generates a source code from a well defined description, ex: in ruby, show the local weather"
 
             echo -e "\nCreative:"
             echo -e "  title:        Suggests a good title for a specific purpose"
-            echo -e "  titlepost:    Suggest a good engaging (website) post title"
+            echo -e "  titlepost:    Suggests a good engaging (website) post title"
             echo -e "  intro:        Writes an introductory text for an article or similar"
-            echo -e "  story:        Narrate a story based on my description"
-            echo -e "  idea:         Gives ides of how to continue a text"
-            echo -e "  propose:      Propose a text with more contents and ideas, like continuing it"
-            echo -e "  expand:       Expand a text with more and richer contents"
-            echo -e "  product:      Describe a product"
-            echo -e "  seo:          creates a google-like result description to fill in your seo plugin"
-            echo -e "  recipe:       Creates a recipe based in your given ingredients"
-            echo -e "  ux:           Design an UX concept based in the described needs"
+            echo -e "  story:        Narrates a story based on a description"
+            echo -e "  idea:         Gives ideas of how to continue a text"
+            echo -e "  propose:      Proposes a text with more contents and ideas, like continuing it"
+            echo -e "  expand:       Expands a text with more and richer contents"
+            echo -e "  product:      Describes a product"
+            echo -e "  seo:          Creates a Google-like snippet description to fill in your SEO plugin"
+            echo -e "  recipe:       Creates a recipe based on your given ingredients"
+            echo -e "  ux:           Designs an UX concept based on the described needs"
             echo -e "  copywriter:   Writes about any topic from your description or details"
-            echo -e "  techwriter:   Write articles related with technology"
-            echo -e "  domain:       Give (web) domain name ideas"
+            echo -e "  techwriter:   Writes articles related to technology"
+            echo -e "  domain:       Gives (web) domain name ideas"
 
             echo -e "\nSelf-Help:"
-            echo -e "  therapist:    Receive help about different topics related to mental"
-            echo -e "  doctor:       Receive help about different topics related to mental"
-            echo -e "  inspirateme:  Give me a personalized quote to inspire me"
+            echo -e "  therapist:    Receive help from different topics related to mental health"
+            echo -e "  doctor:       Describe a pain or problem in detail to get health directions"
+            echo -e "  inspireme:    Get a personalized sentence to inspire you!"
+            echo -e "  suggest-book: Describe what type of book you want to read and get a good suggestion list"
 
             echo -e "\nFunny:"
-            echo -e "  friend:       Just like if you were talking to a friend"
+            echo -e "  friend:       Speak as if you were talking to a friend"
             echo -e "  girlfriend:   Your personal girlfriend (lol)"
 
             #echo -e "\nWIP:"
-            echo -e "  suggest-book: Describe what type of book you want to read and it will give you a good suggestion"
-            #echo -e "  psychologist:        "
-            echo -e "  palette-mood: Generate a colorscheme based on your location's actual weather"
-            echo -e "  smarter       Answers with a scientific / philosofical / smart way"
-            echo -e "  human-cyber-guidance / project-manager:  based on a specific goal, ask every day (or hour?) about the tasks reached / work done, in order to answer a guidance about how to go faster or suggest the next tasks to do (use a history.txt file where to put the previous answers in order to include all of them in a single shot, max 50 lines)"
-            echo -e "  psico-historia?"
+            #echo -e "  palette-mood: Generate a colorscheme based on your location's actual weather"
+            #echo -e "  human-cyber-guidance / project-manager:  based on a specific goal, ask every day (or hour?) about the tasks reached / work done, in order to answer a guidance about how to go faster or suggest the next tasks to do (use a history.txt file where to put the previous answers in order to include all of them in a single shot, max 50 lines)"
             #echo -e "  "
             #echo -e "  "
             #echo -e "  "
-            #echo -e "  "
-            #echo -e "  "
-            echo -e "\nNotes: You can write in any language, and it will reply in the same one. The calls are a single shot, if you want to have a deeper conversation please use https://chat.openai.com/chat instead"
+            echo -e "\nNotes: You can write in any language and it will reply in the corresponding one. There is a single answer, but in the GUI mode you can follow a conversation."
         else
             $guitool --error --title="$message_title" --text="$( eval_gettext "No requests given, use this tool as:\n" ) $SOURCE mode message"
         fi
@@ -587,8 +582,12 @@ main(){
             chatgpt_ask "${request_doctor}\n\n${message}"
             result_show_dialog_copy "$answer_g"
             ;;
-        "inspirateme")
-            chatgpt_ask "${request_inspirateme}\n\n${message}"
+        "inspireme")
+            chatgpt_ask "${request_inspireme}\n\n${message}"
+            result_show_dialog_copy "$answer_g"
+            ;;
+        "suggest-book"|"suggestbook")
+            chatgpt_ask "${request_suggestbook}\n\n${message}"
             result_show_dialog_copy "$answer_g"
             ;;
         "techwriter")

@@ -108,16 +108,18 @@ request_domain="I want you to act as a smart domain name generator. I will tell 
 
 
 #username="John Smith"
-#request_inspirateme="Write a positive and motivational quote for a person named '${username}', in a creative and inspiring form but that sounds personal and philosophical. ${pre_language_local}. "
-#request_inspirateme="Write a random but good quote from of these authors: Nikola Tesla, Albert Einstein, Steve Jobs. In another paragraph write a creative sentence for the person named '${username}' with relation to the selected quote. ${pre_language_local}"
-#request_inspirateme=" The present is theirs; the future, for which I really worked, is mine. With the previous concept, create an inspiring quote for a person named '${username}'. ${pre_language_local}. "
-#request_inspirateme=" The present is theirs; the future, for which I really worked, is mine. Write the previous quote with its author. Two lines later in a new paragraph create an inspiring sentence from the previous concept for a person named '${username}'. ${pre_language_local}. "
-request_inspirateme="Write an inspirational quote including its author. From the previous concept create two lines later in a new paragraph, a personalized and inspiring but philosophical sentence for a person named '${username}'. ${pre_language_local}. "
-#request_inspirateme="The present is theirs; the future, for which I really worked, is mine. Write the previous quote with its author. From the previous concept, two lines later in a new paragraph, create an inspiring but philosophical sentence for a person named '${username}'. ${pre_language_local}. "
+#request_inspireme="Write a positive and motivational quote for a person named '${username}', in a creative and inspiring form but that sounds personal and philosophical. ${pre_language_local}. "
+#request_inspireme="Write a random but good quote from of these authors: Nikola Tesla, Albert Einstein, Steve Jobs. In another paragraph write a creative sentence for the person named '${username}' with relation to the selected quote. ${pre_language_local}"
+#request_inspireme=" The present is theirs; the future, for which I really worked, is mine. With the previous concept, create an inspiring quote for a person named '${username}'. ${pre_language_local}. "
+#request_inspireme=" The present is theirs; the future, for which I really worked, is mine. Write the previous quote with its author. Two lines later in a new paragraph create an inspiring sentence from the previous concept for a person named '${username}'. ${pre_language_local}. "
+request_inspireme="Write an inspirational quote including its author. From the previous concept create two lines later in a new paragraph, a personalized and inspiring but philosophical sentence for a person named '${username}'. ${pre_language_local}. "
+#request_inspireme="The present is theirs; the future, for which I really worked, is mine. Write the previous quote with its author. From the previous concept, two lines later in a new paragraph, create an inspiring but philosophical sentence for a person named '${username}'. ${pre_language_local}. "
 
 request_techwriter="I want you to act as a tech writer. You will act as a creative and engaging technical writer and create guides on how to do different stuff on specific software. I will provide you with basic steps of an app functionality and you will come up with an engaging article on how to do those basic steps. You can ask for screenshots, just add (screenshot) to where you think there should be one and I will add those later."
 
 request_copywriter="I want you to act as a generic copywriter, I will describe you anything and you will write well formed paragraph of it. ${pre_language_same}:"
+
+request_suggestbook="I want you to recommend me 10 books with a description of what they talks about, I will give you a description and you will search what's the most interesting book for me, only show me good books. ${pre_language_local}:"
 
 
 # vim: set foldmethod=marker :
