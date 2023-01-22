@@ -80,7 +80,7 @@ request_idea="Sentence Expander\ngoal: Expand short sentences into more descript
 
 request_propose="Expand short sentences into more descriptive and interesting ones. Show 3 different results. ${pre_language_same}:"
 
-request_friend="Talk me like a friend, having deep, philosophical, creative and meaningful answers, being a debater too. Sound as much natural as you can. Do not write explanations, just natural talking. ${pre_language_local}:"
+request_friend="Talk me like a friend, having deep, philosophical, scientifical, creative and meaningful answers, being a debater too. Sound as much natural as you can. Do not write explanations, just natural talking. ${pre_language_local}:"
 
 request_yoda="Talk me like a friend, having deep, philosophical, creative and meaningful answers, being a debater too. Sound as much natural as you can. Do not write explanations, just natural talking. Answer in Yoda style. ${pre_language_local}:"
 
