@@ -77,9 +77,12 @@ result_show_compare(){
         echo -e "${el_c_gr}-------------------------------------------------------------------------------${el_c_n}\n" 1>&2
     else
         if $guitool --question --title="$message_title" --text="$( eval_gettext "Do you want to visually view the differences?" )" ; then
-            urxvt -hold -title "$( eval_gettext "Close the terminal when you have finished" )"  -e bash -c "wdiff -w \"\$(tput bold;tput setaf 1)-\" -x \"\$(tput sgr0)\" -y \"\$(tput bold;tput setaf 2)+\" -z \"\$(tput sgr0)\" <( printf \"%s\" \"$message\" ) <( printf \"%s\" \"$answer\" ) || true"
-            meld <( printf "%s\n" "$message" | sed -e 's|\.|.\n|g' -e 's|,|,\n|g' ) <( printf "%s\n" "$answer" | sed -e 's|\.|.\n|g' -e 's|,|,\n|g' )
-            sleep 4
+            meld <( printf "%s\n" "$message" | tr '\n' ' ' | sed -e 's|\.|.\n|g' -e 's|,|,\n|g' -e 's|;|;\n|g' ) <( printf "%s\n" "$answer" | tr '\n' ' ' | sed -e 's|\.|.\n|g' -e 's|,|,\n|g' -e 's|;|;\n|g' ) &
+            LC_ALL=C sleep 1.8
+
+            urxvt -hold -title "$( eval_gettext "Close the terminal when you have finished" )"  -e bash -c "wdiff -w \"\$(tput bold;tput setaf 1)-\" -x \"\$(tput sgr0)\" -y \"\$(tput bold;tput setaf 2)+\" -z \"\$(tput sgr0)\" <( printf \"%s\" \"$message\" ) <( printf \"%s\" \"$answer\" ) || true" &
+
+            wait
         fi
     fi
 }
@@ -383,7 +386,7 @@ main(){
             echo -e "  - You can write in any language and it will reply in the corresponding one. There is a single answer, but in the GUI mode you can follow a conversation."
             echo -e "  - You can concatenate results, for example:  echo 'h0l4 mznd0, cómo est4s?' | $( basename $SOURCE ) ocrfix | $( basename $SOURCE ) translate-en"
         else
-            $guitool --error --title="$message_title" --text="$( eval_gettext "No requests given, use this tool as:\n" ) $SOURCE mode message"
+            $guitool --error --title="$message_title" --text="$( eval_gettext "No requests given, use this tool as:" )\n $SOURCE mode message"
         fi
         exit 1
     fi
@@ -538,8 +541,8 @@ main(){
         "explain")
             temperature="0.5"
             chatgpt_ask "${request_explain}\n\n${message}"
-            #result_show_notification "$( eval_gettext "Explanation:" )" "$answer_g"
-            result_show_dialog_copy "$answer_g"
+            result_show_notification "$( eval_gettext "Explanation:" )" "$answer_g"
+            #result_show_dialog_copy "$answer_g"
             ;;
         "ocrfix")
             temperature="0.6"
@@ -555,8 +558,8 @@ main(){
             result_show_dialog_copy "$answer_g"
             ;;
         "titlepost")
-            chatgpt_ask "${request_titlepost}\n\n${message}"
-            result_show_dialog_copy "$answer_g"
+            chatgpt_ask "${request_titlepost} ${message}"
+            result_show_dialog_copy "Description: ${message} ${answer_g# }"
             ;;
         "intro")
             #temperature="0.6"
