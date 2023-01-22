@@ -73,11 +73,11 @@ result_show_compare(){
 
     if ((is_interactive)) && ! ((is_gui_wanted)) ; then
         echo -e "" 1>&2
-        wdiff -w "$(tput bold;tput setaf 1)-" -x "$(tput sgr0)" -y "$(tput bold;tput setaf 2)+" -z "$(tput sgr0)" <( printf "%s\n" "$message" ) <( printf "%s\n" "$answer" )
+        wdiff -w "$(tput bold;tput setaf 1)-" -x "$(tput sgr0)" -y "$(tput bold;tput setaf 2)+" -z "$(tput sgr0)" <( printf "%s\n" "$message" ) <( printf "%s\n" "$answer" ) 1>&2 || true
         echo -e "${el_c_gr}-------------------------------------------------------------------------------${el_c_n}\n" 1>&2
     else
         if $guitool --question --title="$message_title" --text="$( eval_gettext "Do you want to visually view the differences?" )" ; then
-            urxvt -hold -title "$( eval_gettext "Close the terminal when you have finished" )"  -e bash -c "wdiff -w \"\$(tput bold;tput setaf 1)-\" -x \"\$(tput sgr0)\" -y \"\$(tput bold;tput setaf 2)+\" -z \"\$(tput sgr0)\" <( printf \"%s\" \"$message\" ) <( printf \"%s\" \"$answer\" )"
+            urxvt -hold -title "$( eval_gettext "Close the terminal when you have finished" )"  -e bash -c "wdiff -w \"\$(tput bold;tput setaf 1)-\" -x \"\$(tput sgr0)\" -y \"\$(tput bold;tput setaf 2)+\" -z \"\$(tput sgr0)\" <( printf \"%s\" \"$message\" ) <( printf \"%s\" \"$answer\" ) || true"
             meld <( printf "%s\n" "$message" | sed -e 's|\.|.\n|g' -e 's|,|,\n|g' ) <( printf "%s\n" "$answer" | sed -e 's|\.|.\n|g' -e 's|,|,\n|g' )
             sleep 4
         fi
@@ -172,7 +172,7 @@ chatgpt_ask(){
         -d '{
             "model": "'"$model"'",
             "prompt": "'"${escaped_prompt}"'",
-            "max_tokens": 3500,
+            "max_tokens": 3200,
             "user": "'"$machine_id"'",
             "temperature": '$temperature'
         }' | jq --indent 2 --monochrome-output )"
@@ -218,8 +218,6 @@ chatgpt_ask(){
         echo "$response" | jq --indent 2 --color-output 1>&2
     fi
 
-    el_debug "Q: $message_original"
-    el_debug "A: $answer_g"
 
     # fixes
     # delete the first line if contains no useful information
@@ -240,6 +238,8 @@ chatgpt_ask(){
     #if [[ "$( echo "$answer_g" | wc -l )" = 1 ]] ; then
         #answer_g="$( printf "%s\n" "$answer_g" | sed -e 's|^,||g' -e 's|^\.||g' -e 's|^ ||g' )"
     #fi
+    el_debug "Q: $message_original"
+    el_debug "A: $answer_g"
 }
 
 chatgpt_apikey_get(){
@@ -542,7 +542,8 @@ main(){
             ;;
         "ocrfix")
             temperature="0.6"
-            chatgpt_ask "${request_ocrfix}\n\n${message}" | sed -e 's|^Correction:||g'
+            chatgpt_ask "${request_ocrfix}\n\n${message}"
+            answer_g="$( echo "$answer_g" | sort -u | sed -e 's|^Correction:||g' )"
             result_show_compare "$message" "$answer_g"
             result_show_dialog_copy "$answer_g"
             ;;
