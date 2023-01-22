@@ -601,7 +601,7 @@ main(){
             ;;
         "inspireme")
             chatgpt_ask "${request_inspireme}\n\n${message}"
-            result_show_dialog_copy "$answer_g"
+            result_show_notification "$( eval_gettext "Personal dedication" )" "$answer_g"
             ;;
         "suggest-book"|"suggestbook")
             chatgpt_ask "${request_suggestbook}\n\n${message}"
