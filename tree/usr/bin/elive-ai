@@ -378,7 +378,9 @@ main(){
             #echo -e "  "
             #echo -e "  "
             #echo -e "  "
-            echo -e "\nNotes: You can write in any language and it will reply in the corresponding one. There is a single answer, but in the GUI mode you can follow a conversation."
+            echo -e "\nNotes:"
+            echo -e "  - You can write in any language and it will reply in the corresponding one. There is a single answer, but in the GUI mode you can follow a conversation."
+            echo -e "  - You can concatenate results, for example:  echo 'h0l4 mznd0' | $( basename $SOURCE ) ocrfix | $( basename $SOURCE ) translate-en"
         else
             $guitool --error --title="$message_title" --text="$( eval_gettext "No requests given, use this tool as:\n" ) $SOURCE mode message"
         fi
