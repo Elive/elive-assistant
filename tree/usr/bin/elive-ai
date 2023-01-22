@@ -371,6 +371,7 @@ main(){
             echo -e "\nFunny:"
             echo -e "  friend:       Speak as if you were talking to a friend"
             echo -e "  girlfriend:   Your personal girlfriend (lol)"
+            echo -e "  yoda:         Speak with Yoda from Star Wars"
 
             #echo -e "\nWIP:"
             #echo -e "  palette-mood: Generate a colorscheme based on your location's actual weather"
@@ -573,6 +574,11 @@ main(){
         "friend")
             temperature="0.9"
             chatgpt_ask "${request_friend}\n\n${message}"
+            result_show_dialog_copy "$answer_g"
+            ;;
+        "yoda")
+            temperature="0.9"
+            chatgpt_ask "${request_yoda}\n\n${message}"
             #result_show_notification "$( eval_gettext "Explanation:" )" "$answer_g"
             if ((is_interactive)) && ! ((is_gui_wanted)) ; then
                 if ((is_console)) ; then
