@@ -15,7 +15,15 @@ temperature="0.8"
 model="text-davinci-003"
 
 # debug
-set -e
+#set -e
+
+#trap "exit_ok" EXIT
+trap "exit_error" 1 3 5 6 14 15 ERR TERM
+exit_error(){
+    el_error "on func ${FUNCNAME[1]} - $(caller)"
+    exit
+}
+
 
 # useful variables / user data:
 username="$( awk -v user="$USER" -v FS=":" '{if ($1 == user) print $5}' /etc/passwd )"
@@ -61,10 +69,12 @@ result_show_compare(){
     message="$1"
     answer="$2"
 
+    message="$( echo -e "$message" )"
+
     if ((is_interactive)) && ! ((is_gui_wanted)) ; then
         echo -e "" 1>&2
         wdiff -w "$(tput bold;tput setaf 1)-" -x "$(tput sgr0)" -y "$(tput bold;tput setaf 2)+" -z "$(tput sgr0)" <( printf "%s\n" "$message" ) <( printf "%s\n" "$answer" )
-        echo -e "" 1>&2
+        echo -e "${el_c_gr2}------------------------------------------------------------------${el_c_n}\n" 1>&2
     else
         if $guitool --question --title="$message_title" --text="$( eval_gettext "Do you want to visually view the differences?" )" ; then
             urxvt -hold -title "$( eval_gettext "Close the terminal when you have finished" )"  -e bash -c "wdiff -w \"\$(tput bold;tput setaf 1)-\" -x \"\$(tput sgr0)\" -y \"\$(tput bold;tput setaf 2)+\" -z \"\$(tput sgr0)\" <( printf \"%s\" \"$message\" ) <( printf \"%s\" \"$answer\" )"
@@ -316,56 +326,56 @@ main(){
         if ((is_interactive)) ; then
             echo -e "Usage: $(basename $BASH_SOURCE) mode message"
             echo -e "  GUI: use with --gui if you run it from a terminal but want some GUI features"
-            echo -e "  you an also use this tool as a pipe, like: echo 'hell0 wrold' | $(basename $0) corrector"
+            echo -e "  You can also use this tool as a pipe, e.g. echo 'hell0 wrold' | $(basename $0) corrector"
             echo -e "Modes:"
             echo -e "\nText modifiers:"
-            echo -e "  translate:    translates from any language (even if mixed) to your local language used in your Elive system"
-            echo -e "  translate-en: translate any text to english, with well formed sentences and good and elegant english"
-            echo -e "  corrector:    it corrects any given text (in any language)"
-            echo -e "  proofread:    it corrects and improves slightly any given text"
-            echo -e "  synonyms:     write synonyms for a given word, or define a concept. Ex: computer portable -> laptop"
-            echo -e "  rephrase:     rewrites a text improving it"
-            echo -e "  persuade:     rewrite a text in a more persuasive way"
-            echo -e "  improver:     it rephrases texts in a more deeply, elegant and literary way, showing different options"
-            echo -e "  summarize:    summarize a text, remove useless and unneeded parts"
-            echo -e "  simplify:     simplify a text as much as possible, making it shorter and concise (lacking emotion)"
-            echo -e "  organize:     rewrites your text in a list of points in a logical order"
+            echo -e "  translate:    Translates from any language (even if mixed) to your local language used in your Elive system"
+            echo -e "  translate-en: Translate any text to english, with well formed sentences and good and elegant english"
+            echo -e "  corrector:    It corrects any given text (in any language)"
+            echo -e "  proofread:    It corrects and improves slightly any given text"
+            echo -e "  synonyms:     Write synonyms for a given word, or define a concept. Ex: computer portable -> laptop"
+            echo -e "  rephrase:     Rewrites a text improving it"
+            echo -e "  persuade:     Rewrite a text in a more persuasive way"
+            echo -e "  improver:     It rephrases texts in a more deeply, elegant and literary way, showing different options"
+            echo -e "  summarize:    Summarize a text, remove useless and unneeded parts"
+            echo -e "  simplify:     Simplify a text as much as possible, making it shorter and concise (lacking emotion)"
+            echo -e "  organize:     Rewrites your text in a list of points in a logical order"
 
             echo -e "\nTools:"
-            echo -e "  explain:      explains a concept, a jargon, abbreviature, or anything!"
-            echo -e "  ocrfix:       fixes the text of a wrongly detected characters from a scanned document"
+            echo -e "  explain:      Explains a concept, a jargon, abbreviature, or anything!"
+            echo -e "  ocrfix:       Fixes the text of a wrongly detected characters from a scanned document"
             #echo -e "  code:         generates a source code from a well defined description, ex: in ruby, show the local weather"
 
             echo -e "\nCreative:"
-            echo -e "  title:        suggests a good title for a specific purpose"
-            echo -e "  titlepost:    suggest a good engaging (website) post title"
-            echo -e "  intro:        writes an introductory text for an article or similar"
-            echo -e "  story:        narrate a story based on my description"
-            echo -e "  idea:         gives ides of how to continue a text"
-            echo -e "  propose:      propose a text with more contents and ideas, like continuing it"
-            echo -e "  expand:       expand a text with more and richer contents"
-            echo -e "  product:      describe a product"
+            echo -e "  title:        Suggests a good title for a specific purpose"
+            echo -e "  titlepost:    Suggest a good engaging (website) post title"
+            echo -e "  intro:        Writes an introductory text for an article or similar"
+            echo -e "  story:        Narrate a story based on my description"
+            echo -e "  idea:         Gives ides of how to continue a text"
+            echo -e "  propose:      Propose a text with more contents and ideas, like continuing it"
+            echo -e "  expand:       Expand a text with more and richer contents"
+            echo -e "  product:      Describe a product"
             echo -e "  seo:          creates a google-like result description to fill in your seo plugin"
-            echo -e "  recipe:       creates a recipe based in your given ingredients"
-            echo -e "  ux:           design an UX concept based in the described needs"
-            echo -e "  techwriter:   write articles related with technology"
-            echo -e "  domain:       give (web) domain name ideas"
+            echo -e "  recipe:       Creates a recipe based in your given ingredients"
+            echo -e "  ux:           Design an UX concept based in the described needs"
+            echo -e "  copywriter:   Writes about any topic from your description or details"
+            echo -e "  techwriter:   Write articles related with technology"
+            echo -e "  domain:       Give (web) domain name ideas"
 
             echo -e "\nSelf-Help:"
-            echo -e "  therapist:    receive self-help about different topics related to mental"
-            echo -e "  doctor:    receive self-help about different topics related to mental"
-            echo -e "  inspirateme:  give me a personalized quote to inspire me"
+            echo -e "  therapist:    Receive help about different topics related to mental"
+            echo -e "  doctor:       Receive help about different topics related to mental"
+            echo -e "  inspirateme:  Give me a personalized quote to inspire me"
 
             echo -e "\nFunny:"
-            echo -e "  friend:       just like if you were talking to a friend"
-            echo -e "  girlfriend:   your personal girlfriend (lol)"
+            echo -e "  friend:       Just like if you were talking to a friend"
+            echo -e "  girlfriend:   Your personal girlfriend (lol)"
 
-            echo -e "\nWIP:"
-            echo -e "  copywriter:   talk about something and with some selected options, you can develop specific-purpose beautiful texts"
-            echo -e "  suggest-book: describe what type of book you want to read and it will give you a good suggestion"
+            #echo -e "\nWIP:"
+            echo -e "  suggest-book: Describe what type of book you want to read and it will give you a good suggestion"
             #echo -e "  psychologist:        "
-            echo -e "  palette-mood:      generate a colorscheme based on your location's actual weather"
-            echo -e "  smarter       answers with a scientific / philosofical / smart way"
+            echo -e "  palette-mood: Generate a colorscheme based on your location's actual weather"
+            echo -e "  smarter       Answers with a scientific / philosofical / smart way"
             echo -e "  human-cyber-guidance / project-manager:  based on a specific goal, ask every day (or hour?) about the tasks reached / work done, in order to answer a guidance about how to go faster or suggest the next tasks to do (use a history.txt file where to put the previous answers in order to include all of them in a single shot, max 50 lines)"
             echo -e "  psico-historia?"
             #echo -e "  "
@@ -583,6 +593,10 @@ main(){
             ;;
         "techwriter")
             chatgpt_ask "${request_techwriter}\n\n${message}"
+            result_show_dialog_copy "$answer_g"
+            ;;
+        "copywriter")
+            chatgpt_ask "${request_copywriter}\n\n${message}"
             result_show_dialog_copy "$answer_g"
             ;;
         "domain")
