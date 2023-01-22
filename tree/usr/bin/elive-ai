@@ -331,11 +331,11 @@ main(){
             echo -e "\nText modifiers:"
             echo -e "  translate:    Translates from any language (even if mixed) to your local language used in your Elive system"
             echo -e "  translate-en: Translates any text to English, with well-formed sentences and good, elegant English"
-            echo -e "  corrector:    Corrects any given text (in any language)"
-            echo -e "  proofread:    Corrects and slightly improves any given text"
+            echo -e "  corrector:    Corrects the grammar any given text (in any language)"
+            echo -e "  proofread:    Corrects the grammar and slightly improves any given text"
             echo -e "  synonyms:     Writes synonyms for a given word, or defines a concept. e.g. 'computer portable' -> laptop"
             echo -e "  rephrase:     Rewrites a text in a different way"
-            echo -e "  persuade:     Rewrites a text in a more persuasive way"
+            echo -e "  persuade:     Rewrites a text in a more convincing way"
             echo -e "  improver:     Rephrases a text in a deeper, more elegant and literary way, showing different options"
             echo -e "  summarize:    Summarizes a text, removing useless and unneeded parts"
             echo -e "  simplify:     Simplifies a text as much as possible, making it shorter and concise (lacking emotion)"
@@ -615,7 +615,8 @@ main(){
                 if ((is_console)) ; then
                     result_show_dialog_copy "$answer_g"
                 else
-                    result_show_dialog_copy "$answer_g" | cowsay -f linda
+                    # note: "linda" is not the most beautiful image for a girlfriend, but it was small one (the other ones are too huge), yoda is the best one also as size and feeling but of course he looks strange on this role
+                    result_show_dialog_copy "$answer_g" | cowsay -f poison-ivy
                 fi
             else
                 result_show_dialog_copy "$answer_g"
