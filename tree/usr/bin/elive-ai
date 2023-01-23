@@ -76,7 +76,7 @@ result_show_compare(){
         wdiff -w "$(tput bold;tput setaf 1)-" -x "$(tput sgr0)" -y "$(tput bold;tput setaf 2)+" -z "$(tput sgr0)" <( printf "%s\n" "$message" ) <( printf "%s\n" "$answer" ) 1>&2 || true
         echo -e "${el_c_gr}-------------------------------------------------------------------------------${el_c_n}\n" 1>&2
     else
-        if $guitool --question --title="$message_title" --text="$( eval_gettext "Do you want to visually view the differences?" )" ; then
+        if $guitool --question --title="$message_title" --text="$( eval_gettext "Do you want to visualize the differences?" )" ; then
             meld <( printf "%s\n" "$message" | tr '\n' ' ' | sed -e 's|\.|.\n|g' -e 's|,|,\n|g' -e 's|;|;\n|g' ) <( printf "%s\n" "$answer" | tr '\n' ' ' | sed -e 's|\.|.\n|g' -e 's|,|,\n|g' -e 's|;|;\n|g' ) &
             LC_ALL=C sleep 1.8
 
