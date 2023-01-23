@@ -80,7 +80,7 @@ result_show_compare(){
             meld <( printf "%s\n" "$message" | tr '\n' ' ' | sed -e 's|\.|.\n|g' -e 's|,|,\n|g' -e 's|;|;\n|g' ) <( printf "%s\n" "$answer" | tr '\n' ' ' | sed -e 's|\.|.\n|g' -e 's|,|,\n|g' -e 's|;|;\n|g' ) &
             LC_ALL=C sleep 1.8
 
-            urxvt -hold -title "$( eval_gettext "Close the terminal when you have finished" )"  -e bash -c "wdiff -w \"\$(tput bold;tput setaf 1)-\" -x \"\$(tput sgr0)\" -y \"\$(tput bold;tput setaf 2)+\" -z \"\$(tput sgr0)\" <( printf \"%s\" \"$message\" ) <( printf \"%s\" \"$answer\" ) || true" &
+            urxvt -hold -title "$( eval_gettext "Close the terminal when you are finished" )"  -e bash -c "wdiff -w \"\$(tput bold;tput setaf 1)-\" -x \"\$(tput sgr0)\" -y \"\$(tput bold;tput setaf 2)+\" -z \"\$(tput sgr0)\" <( printf \"%s\" \"$message\" ) <( printf \"%s\" \"$answer\" ) || true" &
 
             wait
         fi
@@ -99,7 +99,7 @@ result_show_dialog_copy(){
     local message_speak
     message_speak="$( printf "$( eval_gettext "Speak" )" "" )"
     local message_conversate
-    message_conversate="$( printf "$( eval_gettext "Conversate" )" "" )"
+    message_conversate="$( printf "$( eval_gettext "Converse" )" "" )"
 
 
     #if false ; then
@@ -254,7 +254,7 @@ chatgpt_apikey_get(){
     ( web-launcher https://beta.openai.com/account/api-keys & )
     sleep 12
 
-    result="$( $guitool --entry --title="$message_title" --text="$( eval_gettext "Insert here your API key" )" )"
+    result="$( $guitool --entry --title="$message_title" --text="$( eval_gettext "Insert your API key here" )" )"
 
     if [[ -n "$result" ]] ; then
         OPENAI_TOKEN="$result" chatgpt_ask "$request_verification"
@@ -306,7 +306,7 @@ main(){
 
     if ! el_verify_internet 2>/dev/null ; then
         local message_no_internet
-        message_no_internet="$( printf "$( eval_gettext "You need to have a connection to internet in order to use this tool." )" "" )"
+        message_no_internet="$( printf "$( eval_gettext "You need to have a connection to the Internet in order to use this tool." )" "" )"
 
         el_error_wrapper "$message_no_internet"
     fi
