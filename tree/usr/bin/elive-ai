@@ -397,6 +397,15 @@ main(){
         shift
     fi
 
+    # install extra gui dependencies if needed, only if we want to use gui
+    if ((is_interactive)) && ! ((is_gui_wanted)) ; then
+        true
+    else
+        if ! el_dependencies_check "yad" ; then
+            el_dependencies_install "yad"
+        fi
+    fi
+
     mode="$1"
     shift
 
