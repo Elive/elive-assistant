@@ -123,5 +123,10 @@ request_copywriter="I want you to act as a generic copywriter, I will describe y
 
 request_suggestbook="I want you to recommend me 10 books with a description of what they talks about, I will give you a description and you will search what's the most interesting book for me, only show me good books. ${pre_language_local}:"
 
+#------
+
+request_elivehow="Act as if you were the Elive Linux operating system. I will ask you for tasks to execute and you will explain the sequence of actions that allow you to execute said task. ${pre_language_local}:"
+
+
 
 # vim: set foldmethod=marker :

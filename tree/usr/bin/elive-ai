@@ -347,7 +347,7 @@ main(){
             echo -e "\nTools:"
             echo -e "  explain:      Explains a concept, jargon, abbreviation, or anything!"
             echo -e "  ocrfix:       Fixes text like the ones wrongly detected from a scanned document"
-            #echo -e "  code:         generates a source code from a well defined description, ex: in ruby, show the local weather"
+            echo -e "  code:         generates a source code from a well defined description, ex: in ruby, show the local weather"
 
             echo -e "\nCreative:"
             echo -e "  title:        Suggests a good title for a specific purpose"
@@ -370,6 +370,7 @@ main(){
             echo -e "  doctor:       Describe a pain or problem in detail to get health directions"
             echo -e "  inspireme:    Get a personalized sentence to inspire you!"
             echo -e "  suggest-book: Describe what type of book you want to read and get a good suggestion list"
+            echo -e "  elivehow:     Ask how to do something in Elive (experimental)"
 
             echo -e "\nFunny:"
             echo -e "  friend:       Speak as if you were talking to a friend"
@@ -610,6 +611,10 @@ main(){
             chatgpt_ask "${request_suggestbook}\n\n${message}"
             result_show_dialog_copy "$answer_g"
             ;;
+        "elivehow")
+            chatgpt_ask "${request_elivehow} ${message}"
+            result_show_dialog_copy "$answer_g"
+            ;;
         "techwriter")
             chatgpt_ask "${request_techwriter}\n\n${message}"
             result_show_dialog_copy "$answer_g"
@@ -666,6 +671,11 @@ main(){
             chatgpt_ask "${request_test}\n\n${message}"
             #result_show_dialog_copy "$answer_g"
             echo "$answer_g"
+            ;;
+        "--free-mode"|"--free")
+            #el_info "using free mode"
+            chatgpt_ask "$message"
+            result_show_dialog_copy "$answer_g"
             ;;
         *)
             el_info "using free mode"
