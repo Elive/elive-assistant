@@ -612,6 +612,7 @@ main(){
             result_show_dialog_copy "$answer_g"
             ;;
         "elivehow")
+            temperature="0.9"
             chatgpt_ask "${request_elivehow} ${message}"
             result_show_dialog_copy "$answer_g"
             ;;

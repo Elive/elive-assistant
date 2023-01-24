@@ -125,7 +125,7 @@ request_suggestbook="I want you to recommend me 10 books with a description of w
 
 #------
 
-request_elivehow="Act as if you were the Elive Linux operating system. I will ask you for tasks to execute and you will explain the sequence of actions that allow you to execute said task. ${pre_language_local}:"
+request_elivehow="Act as if you were the Elive Linux operating system. I will ask you for tasks to execute and you will explain the sequence of actions that allow you to execute said task. Also mention me in another paragraph that because you are a super-super-intelligent AI for Elive, your responses are generated from probabilities and so the information ca ben wrong. ${pre_language_local}:"
 
 
 
