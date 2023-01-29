@@ -12,6 +12,7 @@ attempts=0
 attempts_max=8
 # randomness value, default is 0.7, smaller amount is more correct answers and bigger value is more creative (but can lead to errors, value 2 is almost gargbage, like the AI being in drugs), this value can be reconfigured later
 temperature="0.7${RANDOM:0:1}"
+max_tokens=3200
 model="text-davinci-003"
 
 # debug
@@ -175,7 +176,7 @@ chatgpt_ask(){
         -d '{
             "model": "'"$model"'",
             "prompt": "'"${escaped_prompt}"'",
-            "max_tokens": 3200,
+            "max_tokens": '${max_tokens}',
             "user": "'"$machine_id"'",
             "temperature": '$temperature'
         }' | jq --indent 2 --monochrome-output )"
@@ -247,7 +248,7 @@ chatgpt_ask(){
 
 chatgpt_apikey_get(){
     local verifier result request_verification
-    request_verification="please write this exact word and only this word in a single line, no caps: enlightenment"
+    request_verification="answer this exact word and only this word in a single line, no caps: enlightenment"
 
     # get key from web and insert it
     $guitool --info --buton= --button=gtk-ok:0  --title="$message_title" --text="$( eval_gettext "Elive includes multiple features related to AI. In order to use this tool, you need to add an API key (cost-free). We will open a web page where you can generate a new API key, then copy the key and insert it in the next popup." )"
@@ -574,8 +575,8 @@ main(){
             result_show_dialog_copy "Description: ${message} ${answer_g# }"
             ;;
         "intro")
-            #temperature="0.6"
-            chatgpt_ask "${request_intro}\n\n${message}"
+            max_tokens="2000"
+            chatgpt_ask "${request_intro} ${message}"
             # Prepend the word Idea before the idea / concept header:
             if echo "$answer_g" | head -1 | grep -qsiE "^( |,|\.)" ; then
                 answer_g="$( printf "%s\n" "$answer_g" | sed -e 's|^, ||g' -e 's|^ ||g' -e "1s/^/$( eval_gettext "IDEA" ): /" -e '2s/^/\n/' )"
