@@ -49,8 +49,8 @@ request_synonyms="I want you to act as a synonyms provider. I will tell you a wo
 #request_persuade="Rephrase the next text in a persuasive way. Reply in the same language as the originally detected:"
 request_persuade="Rephrase the next text to sound persuasive and profesional. ${pre_structure_same}. ${pre_language_same}:"
 
-request_improver="I want you to act as a spelling corrector and improver. I want you to improve my sentences being more beautiful and elegant. Keep the same meaning, but make it more correct. I want you to only reply your corrected text, the improvements and nothing else, do not write explanations. ${pre_language_same}. My text is:"
-request_improver="I want you to act as a spelling corrector and improver. I want you to improve my sentences being more beautiful and elegant. Keep the same meaning, but make it more correct. I want you to only reply your corrected text, the improvements and nothing else, do not write explanations. ${pre_language_same}. Show me 3 different results. My text is:"
+#request_improver="I want you to act as a spelling corrector and improver. I want you to improve my sentences being more beautiful and elegant. Keep the same meaning, but make it more correct. I want you to only reply your corrected text, the improvements and nothing else, do not write explanations. ${pre_language_same}. My text is:"
+request_improver="I want you to act as a spelling corrector and improver. I want you to improve my sentences being more beautiful and elegant. Keep the same meaning, but make it more correct. I want you to only reply your corrected text, the improvements and nothing else, do not write explanations. ${pre_language_same}. Show me 2 different results. My text is:"
 
 request_simplify="Simplify the next text. ${pre_language_same}:"
 
