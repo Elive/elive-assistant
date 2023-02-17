@@ -54,7 +54,7 @@ request_improver="I want you to act as a spelling corrector and improver. I want
 
 request_simplify="Simplify the next text. ${pre_language_same}:"
 
-request_summarize="Summarize the next text. ${pre_language_same}:"
+request_summarize="Summarize the next text, keeping a similar structure, keep the meaning same, but make them more literary. ${pre_language_same}:"
 
 request_organize="Rewrite the given text for brevity, in an outline form. ${pre_language_same}:"
 
