@@ -472,7 +472,7 @@ main(){
             result_show_compare "$message" "$answer_g"
             result_show_dialog_copy "$answer_g"
             ;;
-        "persuade")
+        "persuade"|"persuasive")
             chatgpt_ask "${request_persuade}\n\n${message}"
             result_show_compare "$message" "$answer_g"
             result_show_dialog_copy "$answer_g"
