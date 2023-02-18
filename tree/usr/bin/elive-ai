@@ -444,20 +444,20 @@ main(){
     fi
 
     case "$mode" in
-        "translate")
+        "t"|"translate")
             chatgpt_ask "${request_translate_to_local}\n\n${message}"
             result_show_dialog_copy "$answer_g"
             ;;
-        "translate-en")
+        "te"|"translate-en")
             chatgpt_ask "${request_translate_to_english_well}\n\n${message}"
             result_show_dialog_copy "$answer_g"
             ;;
-        "corrector"|"correct"|"correction")
+        "c"|"corrector"|"correct"|"correction")
             chatgpt_ask "${request_corrector}\n\n${message}"
             result_show_compare "$message" "$answer_g"
             result_show_dialog_copy "$answer_g"
             ;;
-        "proofreader"|"proofreading"|"proofread")
+        "p"|"proofreader"|"proofreading"|"proofread")
             chatgpt_ask "${request_proofreader}\n\n${message}"
             result_show_compare "$message" "$answer_g"
             result_show_dialog_copy "$answer_g"
@@ -477,7 +477,7 @@ main(){
             result_show_compare "$message" "$answer_g"
             result_show_dialog_copy "$answer_g"
             ;;
-        "improver"|"improve")
+        "i"|"improver"|"improve")
             chatgpt_ask "${request_improver}\n\n${message}"
             # do not use when having more than 1 alrnative result:
             #result_show_compare "$message" "$answer_g"
@@ -489,7 +489,7 @@ main(){
             result_show_compare "$message" "$answer_g"
             result_show_dialog_copy "$answer_g"
             ;;
-        "summarize")
+        "s"|"summarize")
             temperature="0.9"
             chatgpt_ask "${request_summarize}\n\n${message}"
             result_show_compare "$message" "$answer_g"
