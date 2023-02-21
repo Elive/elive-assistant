@@ -437,6 +437,21 @@ main(){
     if [[ -z "$conf_chatgpt_apikey" ]] ; then
         chatgpt_apikey_get
     fi
+    if [[ -z "$conf_chatgpt_apikey" ]] ; then
+        if [[ -n "$EROOT" ]] ; then
+            # e16
+            if grep -qs "/elive-ai-" "$HOME/.e16/startup-applications.list" ; then
+                if $guitool --question --title="$message_title" --text="$( eval_gettext "You have Elive-AI features to run on your desktop startup, but Elive-AI is not correctly configured. Do you want to disable these from your startup applications?" )" ; then
+                    sed -i 's|^[^#].*/elive-ai-|#&|g' "$HOME/.e16/startup-applications.list"
+                fi
+            fi
+        else
+            if [[ -n "$E_START" ]] ; then
+            # e17
+                el_error "E17+ not implemented yet"
+            fi
+        fi
+    fi
 
     # use key
     if [[ -n "$conf_chatgpt_apikey" ]] ; then
