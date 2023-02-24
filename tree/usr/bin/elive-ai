@@ -252,9 +252,10 @@ chatgpt_apikey_get(){
     request_verification="Hello, how are you today? tell me something interesting in a one line sentence"
 
     # get key from web and insert it
-    $guitool --info --buton= --button=gtk-ok:0  --title="$message_title" --text="$( eval_gettext "Elive includes multiple features related to AI. In order to use this tool, you need to add an API key (cost-free). We will open a web page where you can generate a new API key, then copy the key and insert it in the next popup." )"
+    $guitool --info --buton= --button=gtk-ok:0  --title="$message_title" --text="$( eval_gettext "Elive made a tool to use AI features with ZERO tracking and only when the user's requests it. In order to use this tool, you need to add an API key (cost-free). We will open a web page where you can generate a new API key, then copy the key and insert it in the next popup." )"
+    :
     ( web-launcher https://beta.openai.com/account/api-keys & )
-    sleep 16
+    sleep 14
     $guitool --info --buton= --button=gtk-ok:0  --title="$message_title" --text="$( eval_gettext "Instructions: First you need to Sign Up if you didn't do it yet. After, go to your account to view your API keys and then generate a new one, this key is what we need to make it working." )"
     sleep 3
 
