@@ -69,7 +69,7 @@ disable_autolaunchers(){
     if [[ -n "$EROOT" ]] ; then
         # e16
         if grep -qs "/elive-ai-" "$HOME/.e16/startup-applications.list" ; then
-            if $guitool --question --title="$message_title" --text="$( eval_gettext "You have Elive-AI features to run on your desktop startup, but Elive-AI is not correctly configured. Do you want to disable these from your startup applications?" )" ; then
+            if $guitool --question --title="$message_title" --text="$( eval_gettext "There's a feature to give you a beautiful motivational sentence on your desktop startup using AI, but Elive-AI is not configured yet. Do you want to disable it from your startup applications?" )" ; then
                 sed -i 's|^[^#].*/elive-ai-|#&|g' "$HOME/.e16/startup-applications.list"
             fi
         fi
