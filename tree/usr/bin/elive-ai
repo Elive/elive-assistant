@@ -287,9 +287,6 @@ chatgpt_apikey_get(){
             el_error_wrapper "$message_failed_response"
             exit 1
         fi
-    else
-        $guitool --error --title="$message_title" --text="$( eval_gettext "You need to insert a (cost-free) API key to use this tool. Exiting..." )"
-        exit 1
     fi
 }
 
@@ -451,6 +448,9 @@ main(){
                 el_error "E17+ not implemented yet"
             fi
         fi
+
+        $guitool --error --title="$message_title" --text="$( eval_gettext "You need to insert a (cost-free) API key to use this tool. Exiting..." )"
+        exit 1
     fi
 
     # use key
