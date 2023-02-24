@@ -282,7 +282,7 @@ chatgpt_apikey_get(){
         else
             local message_failed_response
             #message_failed_response="$( printf "$( eval_gettext "Failed verification response, AI answered '%s' and should have answered '%s'" )" "$verifier" "enlightenment" )"
-            message_failed_response="$( printf "$( eval_gettext "Failed verification response, the AI didn't replied anything." )" )"
+            message_failed_response="$( printf "$( eval_gettext "Failed verification response, the AI didn't reply anything." )" )"
 
             el_error_wrapper "$message_failed_response"
             exit 1
