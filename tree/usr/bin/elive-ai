@@ -723,7 +723,8 @@ main(){
             result_show_dialog_copy "$answer_g"
             ;;
         *)
-            el_info "using free mode"
+            NOREPORTS=1 el_warning "you have not passed any argument"
+            el_info "using free mode instead"
             chatgpt_ask "$mode $message"
             result_show_dialog_copy "$answer_g"
             ;;
