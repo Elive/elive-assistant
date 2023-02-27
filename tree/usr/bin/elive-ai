@@ -48,6 +48,9 @@ source /usr/share/elive-ai/requests/requests
 #
 
 message_title="$( printf "$( eval_gettext "Supra-Intelligent AI for Elive" )" "" )"
+message_maybelater="$( printf "$( eval_gettext "Maybe Later" )" "" )"
+message_disable="$( printf "$( eval_gettext "Disable" )" "" )"
+
 
 guitool="yad --on-top --image=robot --center "
 
@@ -69,7 +72,7 @@ disable_autolaunchers(){
     if [[ -n "$EROOT" ]] ; then
         # e16
         if grep -qs "/elive-ai-" "$HOME/.e16/startup-applications.list" ; then
-            if $guitool --question --title="$message_title" --text="$( eval_gettext "Do you want to disable the autorun of elive-ai from your startup applications? It's basically a simple feature to give you a motivational sentence on your desktop startup and nothing more." )" ; then
+            if $guitool --question --title="$message_title" --text="$( eval_gettext "Do you want to disable the autorun of elive-ai from your startup applications? It's basically a simple feature to give you a motivational sentence on your desktop startup and nothing more." )" --button="${message_disable}:0" and --button="${message_maybelater}:1" ; then
                 sed -i 's|^[^#].*/elive-ai-|#&|g' "$HOME/.e16/startup-applications.list"
             fi
         fi
