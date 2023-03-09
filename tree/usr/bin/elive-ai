@@ -68,6 +68,16 @@ el_error_wrapper(){
 
 
 # Functions
+enable_autolauncher(){
+    if [[ -n "$EROOT" ]] ; then
+        if ! grep -qs "/elive-ai-" "$HOME/.e16/startup-applications.list" ; then
+            if $guitool --question --title="$message_title" --text="$( eval_gettext "Do you want to start your desktop with a welcoming, beautiful and motivating message? You can disable it in any moment from your autostart applications. This is a really nice feature on Elive that we suggest you to have!" )" ; then
+                echo -e "/etc/xdg/autostart/elive-ai-inspirateme.desktop" >> "$HOME/.e16/startup-applications.list"
+            fi
+        fi
+    fi
+}
+
 disable_autolaunchers(){
     if [[ -n "$EROOT" ]] ; then
         # e16
@@ -272,14 +282,14 @@ chatgpt_apikey_get(){
     request_verification="Hello, how are you today? tell me something interesting in a one line sentence"
 
     # get key from web and insert it
-    if ! $guitool --question --title="$message_title" --text="$( eval_gettext "Elive made a tool to use AI features with ZERO tracking and only when the user's requests it. Do you want to configure in order to enjoy these special features?" )" ; then
+    if ! $guitool --question --title="$message_title" --text="$( eval_gettext "Elive made a tool to use AI features with ZERO tracking and only run when the user's wants it. Do you want to configure in order to enjoy these amazing features?" )" ; then
         disable_autolaunchers
         exit
     fi
     $guitool --info --buton= --button=gtk-ok:0  --title="$message_title" --text="$( eval_gettext "In order to use this tool, you need to add an API key (cost-free). We will open a web page where you can generate a new API key, then copy the key and insert it in the next popup." )"
 
     ( web-launcher https://beta.openai.com/account/api-keys & )
-    sleep 14
+    sleep 12
     $guitool --info --buton= --button=gtk-ok:0  --title="$message_title" --text="$( eval_gettext "Instructions: First you need to Sign Up if you didn't do it yet. After, go to your account to view your API keys and then generate a new one; this key is what we need to communicate with the AI." )"
     sleep 3
 
@@ -304,6 +314,9 @@ chatgpt_apikey_get(){
             conf_chatgpt_apikey="$result"
             export OPENAI_TOKEN="$conf_chatgpt_apikey"
             el_config_save "conf_chatgpt_apikey"
+
+            # ask user if wants to include a welcoming message
+            enable_autolauncher
         else
             local message_failed_response
             #message_failed_response="$( printf "$( eval_gettext "Failed verification response, AI answered '%s' and should have answered '%s'" )" "$verifier" "enlightenment" )"
