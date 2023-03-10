@@ -14,6 +14,7 @@ attempts_max=8
 temperature="0.7${RANDOM:0:1}"
 max_tokens=3200
 model="text-davinci-003"
+#model="gpt-3.5-turbo"
 
 # debug
 #set -e
@@ -199,20 +200,46 @@ chatgpt_ask(){
     fi
 
     # request to OpenAI API
-    response="$( curl -m 120  https://api.openai.com/v1/completions \
-        -sS \
-        -H 'Content-Type: application/json' \
-        -H "Authorization: Bearer $OPENAI_TOKEN" \
-        -d '{
-            "model": "'"$model"'",
-            "prompt": "'"${escaped_prompt}"'",
-            "max_tokens": '${max_tokens}',
-            "user": "'"$machine_id"'",
-            "temperature": '$temperature'
-        }' | jq --indent 2 --monochrome-output )"
+    case "$model" in
+        "text-davinci-"*)
+            response="$( curl -m 120  https://api.openai.com/v1/completions \
+                -sS \
+                -H 'Content-Type: application/json' \
+                -H "Authorization: Bearer $OPENAI_TOKEN" \
+                -d '{
+                    "model": "'"$model"'",
+                    "prompt": "'"${escaped_prompt}"'",
+                    "max_tokens": '${max_tokens}',
+                    "user": "'"$machine_id"'",
+                    "temperature": '$temperature'
+                }' | jq --indent 2 --monochrome-output )"
 
-    answer_g="$( echo "$response" | jq -r '.choices[].text' 2>/dev/null  )"
-    finish_reason="$( echo "$response" | jq -r '.choices[].finish_reason' 2>/dev/null )"
+            answer_g="$( echo "$response" | jq -r '.choices[].text' 2>/dev/null  )"
+            finish_reason="$( echo "$response" | jq -r '.choices[].finish_reason' 2>/dev/null )"
+            ;;
+
+        "gpt-3.5-turbo")
+            response="$( curl -m 120  https://api.openai.com/v1/chat/completions \
+                -sS \
+                -H 'Content-Type: application/json' \
+                -H "Authorization: Bearer $OPENAI_TOKEN" \
+                -d '{
+                      "model": "'"$model"'",
+                      "messages": [
+                        {
+                          "role": "user",
+                          "content": "'"${escaped_prompt}"'"
+                        }
+                      ],
+                      "max_tokens": '${max_tokens}',
+                      "user": "'"$machine_id"'",
+                      "temperature": '$temperature'
+                    }' | jq --indent 2 --monochrome-output )"
+
+            answer_g="$( echo "$response" | jq -r '.choices[].message.content' 2>/dev/null  )"
+            finish_reason="$( echo "$response" | jq -r '.choices[].finish_reason' 2>/dev/null )"
+            ;;
+    esac
 
     # try again
     if [[ -z "$answer_g" ]] ; then
@@ -223,9 +250,13 @@ chatgpt_ask(){
                 exit 1
             else
                 attempts="$(( $attempts + 1 ))"
-                el_debug "too many attempts, trying again ($attempts) ..."
-                sleep 5
-                sleep $attempts
+                if [[ "$error_type" == "requests" ]] ; then
+                    el_debug "too many attempts, trying again ($attempts) ..."
+                    sleep 5
+                    sleep $attempts
+                else
+                    el_error "$( echo "$response" | jq )"
+                fi
 
                 $FUNCNAME "$@"
                 return $?
@@ -240,11 +271,11 @@ chatgpt_ask(){
 
     # unfinished?
     if [[ -n "$finish_reason" ]] && [[ "$finish_reason" != "stop" ]] ; then
-        el_warning "finish_reason is not stop: $finish_reason"
-        echo "$response" | jq --indent 2 --color-output 1>&2
-    fi
-    if [[ -n "$finish_reason" ]] && [[ "$finish_reason" = "length" ]] ; then
-        answer_g="$( printf "%s\n...[more]...\n" "$answer_g" )"
+        if [[ -n "$finish_reason" ]] && [[ "$finish_reason" = "length" ]] ; then
+            answer_g="$( printf "%s\n...[more]...\n" "$answer_g" )"
+        else
+            el_warning "finish_reason is not stop: $finish_reason\n$( echo "$response" | jq --indent 2 --color-output )"
+        fi
     fi
 
     # debug
