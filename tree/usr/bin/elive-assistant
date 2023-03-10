@@ -98,6 +98,38 @@ disable_autolaunchers(){
     fi
 }
 
+user_agreement_accept(){
+    local message_privacy_details
+    message_privacy_details="$( printf "$( eval_gettext "This tool made by Elive is meant to be engine-agnostic, at the moment it is using ChatGPT for it while waiting for a more open and better alternative, there's Privacy things you must know... Finally, maybe their service is in mode Trial and you need to pay a subscription in the future. You have been warned." )" "" )"
+    local message_declined
+    message_declined="$( printf "$( eval_gettext "You didn't agreed with the terms and conditions by the OpenAI entity, so we will not continue with the configuration of this tool. You should wait until we move to a better, privacy-protected, and really-open engine to come out so we can switch to it. Exiting for now..." )" "" )"
+    local message_must_select
+    message_must_select="$( printf "$( eval_gettext "You must mark the agreement acceptance in order to continue, or cancel if you disagree and want to exit" )" "" )"
+
+    while true ; do
+        result="$( $guitool --form \
+            --image=gtk-dialog-info \
+            --field="${message_privacy_details}":LBL \
+            --field="I agree":CHK "TRUE" \
+            $NULL || true )"
+
+        result="$( echo "$result" | awk -v FS="|" '{print $2}' )"
+
+        # user don't agree
+        if [[ -z "$result" ]] ; then
+            $guitool --image=gtk-dialog-error --button=gtk-ok:0 --text="${message_declined}"
+            exit 1
+        fi
+        if [[ "$result" = "FALSE" ]] ; then
+            $guitool --image=gtk-dialog-warning --button=gtk-ok:0 --text="${message_must_select}"
+            continue
+        fi
+
+        break
+    done
+}
+
+
 switch_to_previous_model(){
     model="$model_previous"
     el_debug "Switching to the previous model '$model' because seems like is not well compatible with the new one, or at least using this type of request..."
@@ -335,6 +367,9 @@ chatgpt_apikey_get(){
         disable_autolaunchers
         exit
     fi
+
+    user_agreement_accept
+
     $guitool --info --buton= --button=gtk-ok:0  --title="$message_title" --text="$( eval_gettext "In order to use this tool, you need to add an API key. We will open a web page where you can generate a new API key, then copy the key and insert it in the next popup." )"
 
     ( web-launcher https://beta.openai.com/account/api-keys & )
