@@ -50,7 +50,7 @@ source /usr/share/elive-assistant/requests/requests
 # wrappers to allow both GUI and CLI
 #
 
-message_title="$( printf "$( eval_gettext "Helpful clever little Assistant for Elive" )" "" )"
+message_title="$( printf "$( eval_gettext "Supra-Intelligent Assistant for Elive" )" "" )"
 message_maybelater="$( printf "$( eval_gettext "Maybe Later" )" "" )"
 message_disable="$( printf "$( eval_gettext "Disable" )" "" )"
 
@@ -74,7 +74,7 @@ el_error_wrapper(){
 enable_autolauncher(){
     if [[ -n "$EROOT" ]] ; then
         if ! grep -qs "/elive-assistant-" "$HOME/.e16/startup-applications.list" ; then
-            if $guitool --question --title="$message_title" --text="$( eval_gettext "Do you want to start your desktop with a nice and motivating message? This is an Elive feature that we offer but does require signing up with OpenAI where certain privacy concerns do exist. Read up on this if you're unsure. You can disable it any time from your autostart applications." )" ; then
+            if $guitool --question --title="$message_title" --text="$( eval_gettext "Do you want to start your desktop with a nice and motivating message? You can disable it in any moment from your autostart applications." )" ; then
                 echo -e "/etc/xdg/autostart/elive-assistant-inspirateme.desktop" >> "$HOME/.e16/startup-applications.list"
             fi
         fi
@@ -85,7 +85,7 @@ disable_autolaunchers(){
     if [[ -n "$EROOT" ]] ; then
         # e16
         if grep -qs "/elive-assistant-" "$HOME/.e16/startup-applications.list" ; then
-            if $guitool --question --title="$message_title" --text="$( eval_gettext "Do you want to disable elive-assistant from your startup applications and never be asked again?" )" --button="${message_disable}:0" and --button="${message_maybelater}:1" ; then
+            if $guitool --question --title="$message_title" --text="$( eval_gettext "Do you want to disable elive-assistant from your startup applications? This feature is only about giving you a beautiful motivational quote on your desktop startup." )" --button="${message_disable}:0" and --button="${message_maybelater}:1" ; then
                 sed -i 's|^[^#].*/elive-assistant-|#&|g' "$HOME/.e16/startup-applications.list"
                 exit
             fi
@@ -331,7 +331,7 @@ chatgpt_apikey_get(){
     request_verification="Hello, how are you today? tell me something interesting in a one line sentence"
 
     # get key from web and insert it
-    if ! $guitool --question --title="$message_title" --text="$( eval_gettext "This is a tool that has a good amount of useful features using OpenAI tools, it only runs when the user's wants it to. Do you want to configure it in order to use these features?" )" ; then
+    if ! $guitool --question --title="$message_title" --text="$( eval_gettext "This is a tool that has a good amount of useful features using AI tools, it only runs when the user's wants it to. Do you want to configure it in order to use these features?" )" ; then
         disable_autolaunchers
         exit
     fi
