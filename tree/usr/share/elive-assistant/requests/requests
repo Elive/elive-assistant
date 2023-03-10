@@ -1,5 +1,5 @@
 #!/bin/bash
-TEXTDOMAIN="elive-ai"
+TEXTDOMAIN="elive-assistant"
 export TEXTDOMAIN
 
 #

@@ -4,7 +4,7 @@ source /usr/lib/elive-tools/functions 2>/dev/null || true
 EL_REPORTS="1"
 el_make_environment 2>/dev/null || true
 . gettext.sh 2>/dev/null || true
-TEXTDOMAIN="elive-ai"
+TEXTDOMAIN="elive-assistant"
 export TEXTDOMAIN
 
 # attempts to get an answer if something failed
@@ -44,7 +44,7 @@ fi
 
 
 # get the request definitions
-source /usr/share/elive-ai/requests/requests
+source /usr/share/elive-assistant/requests/requests
 
 #
 # wrappers to allow both GUI and CLI
@@ -73,9 +73,9 @@ el_error_wrapper(){
 # Functions
 enable_autolauncher(){
     if [[ -n "$EROOT" ]] ; then
-        if ! grep -qs "/elive-ai-" "$HOME/.e16/startup-applications.list" ; then
+        if ! grep -qs "/elive-assistant-" "$HOME/.e16/startup-applications.list" ; then
             if $guitool --question --title="$message_title" --text="$( eval_gettext "Do you want to start your desktop with a welcoming, beautiful and motivating message? You can disable it in any moment from your autostart applications. This is a really nice feature on Elive that we suggest you to have!" )" ; then
-                echo -e "/etc/xdg/autostart/elive-ai-inspirateme.desktop" >> "$HOME/.e16/startup-applications.list"
+                echo -e "/etc/xdg/autostart/elive-assistant-inspirateme.desktop" >> "$HOME/.e16/startup-applications.list"
             fi
         fi
     fi
@@ -84,9 +84,9 @@ enable_autolauncher(){
 disable_autolaunchers(){
     if [[ -n "$EROOT" ]] ; then
         # e16
-        if grep -qs "/elive-ai-" "$HOME/.e16/startup-applications.list" ; then
-            if $guitool --question --title="$message_title" --text="$( eval_gettext "Do you want to disable the autorun of elive-ai from your startup applications? It's basically a simple feature to give you a motivational sentence on your desktop startup and nothing more." )" --button="${message_disable}:0" and --button="${message_maybelater}:1" ; then
-                sed -i 's|^[^#].*/elive-ai-|#&|g' "$HOME/.e16/startup-applications.list"
+        if grep -qs "/elive-assistant-" "$HOME/.e16/startup-applications.list" ; then
+            if $guitool --question --title="$message_title" --text="$( eval_gettext "Do you want to disable the autorun of elive-assistant from your startup applications? It's basically a simple feature to give you a motivational sentence on your desktop startup and nothing more." )" --button="${message_disable}:0" and --button="${message_maybelater}:1" ; then
+                sed -i 's|^[^#].*/elive-assistant-|#&|g' "$HOME/.e16/startup-applications.list"
                 exit
             fi
         fi
