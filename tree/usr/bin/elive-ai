@@ -13,8 +13,12 @@ attempts_max=8
 # randomness value, default is 0.7, smaller amount is more correct answers and bigger value is more creative (but can lead to errors, value 2 is almost gargbage, like the AI being in drugs), this value can be reconfigured later
 temperature="0.7${RANDOM:0:1}"
 max_tokens=3200
-model="text-davinci-003"
-#model="gpt-3.5-turbo"
+
+#model="text-davinci-003"
+model_previous="text-davinci-003"
+model="gpt-3.5-turbo"
+
+# TODO: in GUI mode, add a button to "try a new answer"
 
 # debug
 #set -e
@@ -94,6 +98,11 @@ disable_autolaunchers(){
             el_error "E17+ not implemented yet"
         fi
     fi
+}
+
+switch_to_previous_model(){
+    model="$model_previous"
+    el_debug "Switching to the previous model '$model' because seems like is not well compatible with the new one, or at least using this type of request..."
 }
 
 result_show_compare(){
@@ -196,12 +205,12 @@ chatgpt_ask(){
     escaped_prompt=$(echo "$message" | sed 's/"/\\"/g')
 
     if ((is_interactive)) ; then
-        el_debug "Full Request:\n$message_complete_g"
+        el_debug "Model: $model\nFull Request:\n$message_complete_g"
     fi
 
     # request to OpenAI API
     case "$model" in
-        "text-davinci-"*)
+        "text-davinci-"*|"code-davinci-"*)
             response="$( curl -m 120  https://api.openai.com/v1/completions \
                 -sS \
                 -H 'Content-Type: application/json' \
@@ -270,7 +279,7 @@ chatgpt_ask(){
     fi
 
     # unfinished?
-    if [[ -n "$finish_reason" ]] && [[ "$finish_reason" != "stop" ]] ; then
+    if [[ -n "$finish_reason" ]] && [[ "$finish_reason" != "stop" ]] && [[ "$finish_reason" != "null" ]] ; then
         if [[ -n "$finish_reason" ]] && [[ "$finish_reason" = "length" ]] ; then
             answer_g="$( printf "%s\n...[more]...\n" "$answer_g" )"
         else
@@ -402,7 +411,7 @@ main(){
 
     # }}}
     # Usage {{{
-    if [[ -z "$1" ]] && ! ((is_stdin)) ; then
+    if { [[ -z "$1" ]] && ! ((is_stdin)) ; } || [[ "$1" = "-h" ]] || [[ "$1" = "--help" ]] ; then
         if ((is_interactive)) ; then
             echo -e "Usage: $(basename $BASH_SOURCE) mode message"
             echo -e "  GUI: use with --gui if you run it from a terminal but want some GUI features"
@@ -517,6 +526,7 @@ main(){
 
     case "$mode" in
         "t"|"translate")
+            switch_to_previous_model
             chatgpt_ask "${request_translate_to_local}\n\n${message}"
             result_show_dialog_copy "$answer_g"
             ;;
@@ -540,6 +550,7 @@ main(){
             result_show_notification "$( eval_gettext "Synonyms or Definitions" )" "$answer_g"
             ;;
         "rephrase")
+            temperature="0.5"
             chatgpt_ask "${request_rephrase}\n\n${message}"
             result_show_compare "$message" "$answer_g"
             result_show_dialog_copy "$answer_g"
@@ -555,15 +566,16 @@ main(){
             #result_show_compare "$message" "$answer_g"
             result_show_dialog_copy "$answer_g"
             ;;
-        "simplify")
-            temperature="0.5"
-            chatgpt_ask "${request_simplify}\n\n${message}"
+        "s"|"summarize")
+            temperature="0.6"
+            #switch_to_previous_model
+            chatgpt_ask "${request_summarize}\n\n${message}"
             result_show_compare "$message" "$answer_g"
             result_show_dialog_copy "$answer_g"
             ;;
-        "s"|"summarize")
-            temperature="0.9"
-            chatgpt_ask "${request_summarize}\n\n${message}"
+        "simplify")
+            temperature="0.5"
+            chatgpt_ask "${request_simplify}\n\n${message}"
             result_show_compare "$message" "$answer_g"
             result_show_dialog_copy "$answer_g"
             ;;
@@ -651,6 +663,8 @@ main(){
             result_show_dialog_copy "$answer_g"
             ;;
         "titlepost")
+            temperature="0.9"
+            #switch_to_previous_model
             chatgpt_ask "${request_titlepost} ${message}"
             result_show_dialog_copy "Description: ${message} ${answer_g# }"
             ;;
@@ -738,16 +752,19 @@ main(){
             ;;
 
         "code")
-            # XXX NOTE: currently working but the results are not reliable, better to use chatgpt directly instead
+            # NOTE: currently working but the results are not reliable, better to use chatgpt directly instead
             if ! echo "$message" | grep -qsiE "^In \w+" ; then
                 el_error_wrapper "Your request must start by the language requested, for example: In ruby, how to calculate..."
                 exit 1
             fi
-            temperature="0.0"
-            model="code-davinci-002"
-            chatgpt_ask "\"\"\"\n${request_code}\n\n${message}\n\"\"\""
+            temperature="0.6"
+            #model="code-davinci-002"
+            model="gpt-3.5-turbo"
+            #chatgpt_ask "\"\"\"\n${request_code}\n\n${message}\n\"\"\""
             #chatgpt_ask "\"\"\"\n${request_code} ${message}\n\"\"\""
-            #chatgpt_ask "${request_code}\n\n${message}"
+            chatgpt_ask "${request_code}\n\n${message}"
+            #chatgpt_ask "${request_code} ${message}"
+            answer_g="$( echo "$answer_g" | sed -e "/<code>/d" -e "/<\/code>/d" -e "/^\`\`/d" )"
             if ((is_interactive)) && ! ((is_gui_wanted)) ; then
                 lang="$( echo "$message" | cut -d" " -f2 | sed -E -e 's#(,|\.|:|;)\s*$##g' )"
                 lang="${lang,,}"
@@ -760,10 +777,36 @@ main(){
 
 
         "test")
-            #temperature="0.5"
-            chatgpt_ask "${request_test}\n\n${message}"
-            #result_show_dialog_copy "$answer_g"
-            echo "$answer_g"
+            count=0
+            # XXX use this value for faster tests: it jumps X number of tests
+            #jump_to=34
+
+            el_info "running in tests mode:"
+
+            el_info "\nType your requests on each loop:"
+            while read -ru 3 mode
+            do
+                echo -e "$mode"
+                count="$(( $count + 1 ))"
+                [[ -n "$jump_to" ]] && [[ "$jump_to" -ge "$count" ]] && continue
+
+                mode="$( echo "$mode" | awk '{print $1}' )"
+                mode="${mode%:}"
+
+                read -e message
+                [[ -z "$message" ]] && continue
+
+                "$SOURCE" "$mode" "$message"
+
+                while true ; do
+                    if el_confirm "Successful?" ; then
+                        break
+                    else
+                        el_info "Trying a new answer..."
+                        "$SOURCE" "$mode" "$message"
+                    fi
+                done
+            done 3<<< "$( "$SOURCE" --help | grep -E "^  [[:alpha:]].*:\s+" | grep -v "GUI:" )"
             ;;
         "--free-mode"|"--free")
             #el_info "using free mode"
