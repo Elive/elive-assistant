@@ -18,8 +18,6 @@ max_tokens=3200
 model_previous="text-davinci-003"
 model="gpt-3.5-turbo"
 
-# TODO: in GUI mode, add a button to "try a new answer"
-
 # debug
 #set -e
 
@@ -141,6 +139,8 @@ result_show_dialog_copy(){
     message_speak="$( printf "$( eval_gettext "Speak" )" "" )"
     local message_conversate
     message_conversate="$( printf "$( eval_gettext "Converse" )" "" )"
+    local message_tryagain
+    message_tryagain="$( printf "$( eval_gettext "New answer" )" "" )"
 
 
     #if false ; then
@@ -152,7 +152,7 @@ result_show_dialog_copy(){
             --width=600 --height=400 --center \
             --text-info --no-markup --wrap \
             --title="$message_title - $mode mode" \
-            --button=gtk-close --button="${message_speak}!stock_volume:12" --button="${message_conversate}!chat":10 --button=gtk-copy:11  --escape-ok
+            --button=gtk-close --button="${message_tryagain}"!reload:13 --button="${message_speak}!stock_volume:12" --button="${message_conversate}!chat":10 --button=gtk-copy:11  --escape-ok
         returned=$?
         case "$returned" in
             10)
@@ -173,6 +173,15 @@ result_show_dialog_copy(){
             12)
                 # copy to clipboard
                 echo -e "$answer" | el_speak_text -f
+                ;;
+            13)
+                # new answer
+                if ((is_gui_wanted)) ; then
+                    $SOURCE --gui "$mode" "$message_original"
+                else
+                    $SOURCE "$mode" "$message_original"
+                fi
+                exit
                 ;;
             0|*)
                 true
