@@ -100,7 +100,7 @@ disable_autolaunchers(){
 
 user_agreement_accept(){
     local message_privacy_details
-    message_privacy_details="$( printf "$( eval_gettext "This tool made by Elive is meant to be engine-agnostic, at the moment it is using ChatGPT for it while waiting for a more open and better alternative, there's Privacy things you must know... Finally, maybe their service is in mode Trial and you need to pay a subscription in the future. You have been warned." )" "" )"
+    message_privacy_details="$( printf "$( eval_gettext "This tool made by Elive is meant to be engine-agnostic, at the moment it is using ChatGPT for it while waiting for a more open and better alternative, there's Privacy things you must know... Maybe their service is in mode Trial and you need to pay a subscription in the future. You have been warned." )" "" )"
     local message_declined
     message_declined="$( printf "$( eval_gettext "You didn't agreed with the terms and conditions by the OpenAI entity, so we will not continue with the configuration of this tool. You should wait until we move to a better, privacy-protected, and really-open engine to come out so we can switch to it. Exiting for now..." )" "" )"
     local message_must_select
@@ -363,7 +363,7 @@ chatgpt_apikey_get(){
     request_verification="Hello, how are you today? tell me something interesting in a one line sentence"
 
     # get key from web and insert it
-    if ! $guitool --question --title="$message_title" --text="$( eval_gettext "This is a tool that has a good amount of useful features using AI tools, it only runs when the user's wants it to. Do you want to configure it in order to use these features?" )" ; then
+    if ! $guitool --question --title="$message_title" --text="$( eval_gettext "This is a tool that uses AI to bring you multiple tools and helpers, it only runs when the user's wants it to. Do you want to configure it?" )" ; then
         disable_autolaunchers
         exit
     fi
